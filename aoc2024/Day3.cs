@@ -48,16 +48,48 @@ namespace aoc2024
 
         public void Part2()
         {
-            var data = File.ReadAllLines(@"data\day3.txt");
+            var data = File.ReadAllText(@"data\day3.txt");
 
-            List<int> cals = new List<int>();
+            string pat2 = @"(mul\(([0-9]{1,3}),([0-9]{1,3})\))|(do\(\))|(don't\(\))";
+            bool enabled = true;
 
-            var values = data.Select(r => r.Split(' ')).ToArray();
+            Regex r = new Regex(pat2);
 
+            // Match the regular expression pattern against a text string.
+            Match m = r.Match(data);
 
+            int matchCount = 0;
+            Int64 sum = 0;
 
+            while (m.Success)
+            {
+                Console.WriteLine("Match" + (++matchCount));
+                if (m.Groups[0].Value == "do()")
+                {
+                    enabled = true;
+                }
+                else if (m.Groups[0].Value == "don't()")
+                {
+                    enabled = false;
+                }
+                else if (enabled)
+                {
+                    for (int i = 1; i <= 2; i++)
+                    {
+                        Group g = m.Groups[i];
+                        Console.WriteLine("Group" + i + "='" + g + "'");
+                    }
 
-            Console.WriteLine($"Answer is {values.Count()}");
+                    var partsum = Convert.ToInt32(m.Groups[2].Value) * Convert.ToInt32(m.Groups[3].Value);
+
+                    sum += partsum;
+
+                }
+
+                m = m.NextMatch();
+            }
+
+            Console.WriteLine($"Answer is {sum}");
         }
 
     }
