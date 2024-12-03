@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace aoc2024
 {
@@ -11,23 +13,37 @@ namespace aoc2024
     {
         public void Part1()
         {
-            var data = File.ReadAllLines(@"data\day3.txt");
+            var data = File.ReadAllText(@"data\day3.txt");
 
-            List<int> cals = new List<int>();
+            string pat = @"mul\(([0-9]{1,3}),([0-9]{1,3})\)";
 
-            var values = data.Select(r => r.Split(' ')).ToArray();
+            Regex r = new Regex(pat);
 
-            /*
-            var values = data.Select(r => r.Length == 0 ? -1 : Int32.Parse(r)).ToArray();
+            // Match the regular expression pattern against a text string.
+            Match m = r.Match(data);
 
-            var values = data.Select(r => r.Select(c => (int)(c - 'a')).ToArray()).ToArray();
+            int matchCount = 0;
+            Int64 sum = 0;
 
-            var values = data.Select(r => Int64.Parse(r)).ToArray();
-            */
+            while (m.Success)
+            {
+                Console.WriteLine("Match" + (++matchCount));
+                for (int i = 1; i <= 2; i++)
+                {
+                    Group g = m.Groups[i];
+                    Console.WriteLine("Group" + i + "='" + g + "'");
+                }
+
+                var partsum = Convert.ToInt32(m.Groups[1].Value) * Convert.ToInt32(m.Groups[2].Value);
+
+                sum += partsum;
+
+                m = m.NextMatch();
+            }
 
 
 
-            Console.WriteLine($"Answer is {values.Count()}");
+            Console.WriteLine($"Answer is {sum}");
         }
 
         public void Part2()
