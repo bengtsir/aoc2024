@@ -13,8 +13,6 @@ namespace aoc2024
         {
             var data = File.ReadAllLines(@"data\day5.txt");
 
-            List<int> cals = new List<int>();
-
             var values = data.Select(r => r.Split(' ')).ToArray();
 
             /*
@@ -33,8 +31,6 @@ namespace aoc2024
         public void Part2()
         {
             var data = File.ReadAllLines(@"data\day5.txt");
-
-            List<int> cals = new List<int>();
 
             var values = data.Select(r => r.Split(' ')).ToArray();
 
