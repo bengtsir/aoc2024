@@ -18,8 +18,13 @@ namespace aoc2024.Structs
         }
 
         public Point(string pair)
+        : this(pair, ',')
         {
-            var tuple = pair.Split(',').Select(Int32.Parse).ToArray();
+        }
+
+        public Point(string pair, char separator)
+        {
+            var tuple = pair.Split(separator).Select(Int32.Parse).ToArray();
             if (tuple.Length != 2)
             {
                 throw new ArgumentException($"Invalid pair: {pair}", nameof(pair));
