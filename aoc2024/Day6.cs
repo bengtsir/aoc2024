@@ -9,16 +9,16 @@ namespace aoc2024
 {
     internal class Day6
     {
-        public void Part1()
-        {
-            var data = File.ReadAllLines(@"data\day6.txt");
-
-            var offsets = new[]{
+        int[][] offsets = new[]{
                 new[]{-1, 0 }, // Up
                 new[]{0, 1}, // Eight
                 new[]{1, 0}, // Down
                 new[]{0, -1}, // Left
             };
+
+        public void Part1()
+        {
+            var data = File.ReadAllLines(@"data\day6.txt");
 
             var values = ArrayMethods.AddBorder(1, 'X', data).Select(vv => vv.ToArray()).ToArray();
 
@@ -54,15 +54,36 @@ namespace aoc2024
             Console.WriteLine($"Answer is {values.Sum(line => line.Count(cc => cc == 'V'))}");
         }
 
-        public bool WillLoop(Array<Array<char>> board)
+        public char Mark(char c, int dir)
+        {
+            char mask = (char) (1 << dir);
+            if (c < 0x40 || c > 0x4F)
+            {
+                c = (char) 0x40;
+            }
+            c |= mask;
+            return c;
+        }
+
+        public bool IsMarked(char c, int dir)
+        {
+            int mask = 1 << dir;
+            if (c >= 0x40 && c <= 0x4F)
+            {
+                return (c & mask) != 0;
+            }
+            return false;
+        }
+
+        public bool WillLoop(char[][] board)
         {
             int r = 0;
             int c = 0;
             int dir = 0;
 
-            for (r = 0; r < values.Length; r++)
+            for (r = 0; r < board.Length; r++)
             {
-                c = Array.IndexOf(values[r], '^');
+                c = Array.IndexOf(board[r], '^');
                 if (c > 0)
                 {
                     break;
@@ -71,15 +92,16 @@ namespace aoc2024
 
             while (board[r][c] != 'X')
             {
-                if (board[r][c] >= '0' && board[r][c] < '9')
+                if (IsMarked(board[r][c], dir))
                 {
-                    var marks = board[r][c] - '0';
+                    return true;
                 }
-                values[r][c] = 'V'; // Visited
+                board[r][c] = Mark(board[r][c], dir);
+
                 r += offsets[dir][0];
                 c += offsets[dir][1];
 
-                if (values[r][c] == '#')
+                if (board[r][c] == '#')
                 {
                     r -= offsets[dir][0];
                     c -= offsets[dir][1];
@@ -88,24 +110,34 @@ namespace aoc2024
                 }
             }
 
+            return false;
         }
 
         public void Part2()
         {
             var data = File.ReadAllLines(@"data\day6.txt");
 
-            var offsets = new[]{
-                new[]{-1, 0 }, // Up
-                new[]{0, 1}, // Eight
-                new[]{1, 0}, // Down
-                new[]{0, -1}, // Left
-            };
-
             var values = ArrayMethods.AddBorder(1, 'X', data).Select(vv => vv.ToArray()).ToArray();
 
+            int sum = 0;
+            for (int r = 0; r < values.Length; r++)
+            {
+                for (int c = 0; c < values[r].Length; c++)
+                {
+                    if (values[r][c] == '.')
+                    {
+                        var testarr = values.Select(vv => vv.ToArray()).ToArray();
+                        testarr[r][c] = '#';
+                        if (WillLoop(testarr))
+                        {
+                            sum++;
+                        }
+                    }
+                }
+            }
 
 
-            Console.WriteLine($"Answer is {values.Sum(line => line.Count(cc => cc == 'V'))}");
+            Console.WriteLine($"Answer is {sum}");
         }
 
     }
