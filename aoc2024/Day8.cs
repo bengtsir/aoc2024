@@ -13,35 +13,92 @@ namespace aoc2024
         {
             var data = File.ReadAllLines(@"data\day8.txt");
 
-            List<int> cals = new List<int>();
+            var values = data.Select(r => r.Select(c => c).ToArray()).ToArray();
+            var mark = data.Select(r => r.Select(c => '.').ToArray()).ToArray();
 
-            var values = data.Select(r => r.Split(' ')).ToArray();
+            int sum = 0;
 
-            /*
-            var values = data.Select(r => r.Length == 0 ? -1 : Int32.Parse(r)).ToArray();
+            for (int r = 0; r < values.Length; r++)
+            {
+                for (int c = 0; c < values[r].Length; c++)
+                {
+                    if (values[r][c] != '.')
+                    {
+                        for (int rr = 0; rr < values.Length; rr++)
+                        {
+                            for (int cc = 0; cc < values[rr].Length; cc++)
+                            {
+                                if (rr != r && cc != c && values[rr][cc] == values[r][c])
+                                {
+                                    var rdiff = rr - r;
+                                    var cdiff = cc - c;
 
-            var values = data.Select(r => r.Select(c => (int)(c - 'a')).ToArray()).ToArray();
+                                    if (r - rdiff >= 0 &&
+                                        r - rdiff < values.Length &&
+                                        c - cdiff >= 0 &&
+                                        c - cdiff < values[rr].Length)
+                                    {
+                                        mark[r - rdiff][c - cdiff] = '#';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-            var values = data.Select(r => Int64.Parse(r)).ToArray();
-            */
 
-
-
-            Console.WriteLine($"Answer is {values.Count()}");
+            Console.WriteLine($"Answer is {mark.Sum(r => r.Count(c => c == '#'))}");
         }
 
         public void Part2()
         {
             var data = File.ReadAllLines(@"data\day8.txt");
 
-            List<int> cals = new List<int>();
+            var values = data.Select(r => r.Select(c => c).ToArray()).ToArray();
+            var mark = data.Select(r => r.Select(c => '.').ToArray()).ToArray();
 
-            var values = data.Select(r => r.Split(' ')).ToArray();
+            int sum = 0;
+
+            for (int r = 0; r < values.Length; r++)
+            {
+                for (int c = 0; c < values[r].Length; c++)
+                {
+                    if (values[r][c] != '.')
+                    {
+                        for (int rr = 0; rr < values.Length; rr++)
+                        {
+                            for (int cc = 0; cc < values[rr].Length; cc++)
+                            {
+                                if (rr != r && cc != c && values[rr][cc] == values[r][c])
+                                {
+                                    mark[r][c] = '#';
+                                    mark[rr][cc] = '#';
+
+                                    var rdiff = rr - r;
+                                    var cdiff = cc - c;
+
+                                    var rt = r - rdiff;
+                                    var ct = c - cdiff;
+
+                                    while (rt >= 0 &&
+                                        rt < values.Length &&
+                                        ct >= 0 &&
+                                        ct < values[rr].Length)
+                                    {
+                                        mark[rt][ct] = '#';
+                                        rt -= rdiff;
+                                        ct -= cdiff;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
 
-
-
-            Console.WriteLine($"Answer is {values.Count()}");
+            Console.WriteLine($"Answer is {mark.Sum(r => r.Count(c => c == '#'))}");
         }
 
     }
