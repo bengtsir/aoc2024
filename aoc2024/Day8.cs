@@ -16,8 +16,6 @@ namespace aoc2024
             var values = data.Select(r => r.Select(c => c).ToArray()).ToArray();
             var mark = data.Select(r => r.Select(c => '.').ToArray()).ToArray();
 
-            int sum = 0;
-
             for (int r = 0; r < values.Length; r++)
             {
                 for (int c = 0; c < values[r].Length; c++)
@@ -58,8 +56,6 @@ namespace aoc2024
             var values = data.Select(r => r.Select(c => c).ToArray()).ToArray();
             var mark = data.Select(r => r.Select(c => '.').ToArray()).ToArray();
 
-            int sum = 0;
-
             for (int r = 0; r < values.Length; r++)
             {
                 for (int c = 0; c < values[r].Length; c++)
@@ -72,14 +68,11 @@ namespace aoc2024
                             {
                                 if (rr != r && cc != c && values[rr][cc] == values[r][c])
                                 {
-                                    mark[r][c] = '#';
-                                    mark[rr][cc] = '#';
-
                                     var rdiff = rr - r;
                                     var cdiff = cc - c;
 
-                                    var rt = r - rdiff;
-                                    var ct = c - cdiff;
+                                    var rt = r;
+                                    var ct = c;
 
                                     while (rt >= 0 &&
                                         rt < values.Length &&

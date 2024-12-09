@@ -43,16 +43,12 @@ namespace aoc2024
             {
                 return true;
             }
-            else
+
+            var cated = Int64.Parse(cumsum.ToString() + values[0].ToString());
+
+            if (cated <= target && IsMorePossible(target, cated, values.Skip(1).ToList()))
             {
-                var cated = Int64.Parse(cumsum.ToString() + values[0].ToString());
-
-                if (cated <= target && IsMorePossible(target, cated, values.Skip(1).ToList()))
-                {
-                    return true;
-                }
-
-                return false;
+                return true;
             }
 
             return false;
