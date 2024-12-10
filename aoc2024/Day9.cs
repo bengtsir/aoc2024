@@ -194,5 +194,89 @@ namespace aoc2024
             Console.WriteLine($"Answer is {sum}");
         }
 
+        internal Int64 P2standalone(string input)
+        {
+            var rawValues = input.Select(c => (int)(c - '0')).ToArray();
+
+            List<Entry> values = new List<Entry>();
+            int fileId = 0;
+            for (int i = 0; i < rawValues.Length; i++)
+            {
+                values.Add(new Entry { id = fileId, length = rawValues[i], isSpace = ((i % 2) == 1) });
+                if ((i % 2) == 1)
+                {
+                    fileId++;
+                }
+            }
+
+            Trim(ref values);
+
+            int currId = values[values.Count - 1].id;
+
+            while (currId > 0)
+            {
+                var toMove = values.Find(x => x.id == currId);
+                var vid = values.IndexOf(toMove);
+                var firstSpace = values.Find(x => x.isSpace && x.length >= toMove.length);
+
+                if (firstSpace != null)
+                {
+                    var firstSpaceIdx = values.IndexOf(firstSpace);
+
+                    if (firstSpaceIdx < vid)
+                    {
+                        values.Insert(firstSpaceIdx, new Entry { id = toMove.id, isSpace = toMove.isSpace, length = toMove.length });
+                        firstSpace.length -= toMove.length;
+                        toMove.isSpace = true;
+                    }
+                }
+
+                currId--;
+            }
+
+            Int64 sum = 0;
+            int currPos = 0;
+
+            for (int i = 0; i < values.Count; i++)
+            {
+                for (int j = 0; j < values[i].length; j++)
+                {
+                    if (!values[i].isSpace)
+                    {
+                        sum += currPos * values[i].id;
+                    }
+                    currPos++;
+                }
+            }
+
+
+            return sum;
+
+        }
+
+
+        internal void P2gen()
+        {
+            var s = "";
+            var r = new Random();
+            for (int i = 0; i < 50; i++)
+            {
+                s = "";
+                int slen = r.Next(5) + 10;
+
+                for (int j = 0; j < slen; j++)
+                {
+                    s += (char)(r.Next(10) + '0');
+                }
+
+                while (s.IndexOf("00") >= 0)
+                {
+                    s = s.Replace("00", "0");
+                }
+
+                Console.WriteLine($"Input: {s}");
+                Console.WriteLine($"Value: {P2standalone(s)}");
+            }
+        }
     }
 }
