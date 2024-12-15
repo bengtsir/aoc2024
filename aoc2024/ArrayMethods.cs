@@ -93,5 +93,21 @@ namespace aoc2024
 
             return f.ToArray();
         }
+
+        public static long GCD(long a, long b)
+        {
+            long r2 = a > b ? a : b;
+            long r1 = a <= b ? a : b;
+            long r0 = r2 % r1;
+
+            while (r0 != 0)
+            {
+                r2 = r1;
+                r1 = r0;
+                r0 = r2 % r1;
+            }
+
+            return r1;
+        }
     }
 }
