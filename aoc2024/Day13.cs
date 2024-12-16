@@ -43,7 +43,7 @@ namespace aoc2024
 
             for (int puzzle = 0; puzzle < values.Length / 3; puzzle++)
             {
-                var minTokens = 999999;
+                var minpress = 999999;
 
                 int ax = values[puzzle * 3][0];
                 int ay = values[puzzle * 3][1];
@@ -60,18 +60,18 @@ namespace aoc2024
                         a * ay + b * by == ty)
                     {
                         var thisCost = a * 3 + b;
-                        if (thisCost < minTokens)
+                        if (thisCost < minpress)
                         {
-                            minTokens = thisCost;
+                            minpress = thisCost;
 
                             Console.WriteLine($"{puzzle} {ax} {ay} {bx} {by} {tx} {ty} {a} {b} {thisCost}");
                         }
                     }
                 }
 
-                if (minTokens < 999999)
+                if (minpress < 999999)
                 {
-                    sum += minTokens;
+                    sum += minpress;
                 }
 
             }
@@ -142,14 +142,20 @@ namespace aoc2024
 
             for (int puzzle = 0; puzzle < values.Length / 3; puzzle++)
             {
-                long minTokens = 999999;
+                var ax = values[puzzle * 3][0];
+                var ay = values[puzzle * 3][1];
+                var bx = values[puzzle * 3 + 1][0];
+                var by = values[puzzle * 3 + 1][1];
+                var tx = values[puzzle * 3 + 2][0] + 10_000_000_000_000;
+                var ty = values[puzzle * 3 + 2][1] + 10_000_000_000_000;
 
-                long ax = values[puzzle * 3][0];
-                long ay = values[puzzle * 3][1];
-                long bx = values[puzzle * 3 + 1][0];
-                long by = values[puzzle * 3 + 1][1];
-                long tx = values[puzzle * 3 + 2][0] + 10_000_000_000_000;
-                long ty = values[puzzle * 3 + 2][1] + 10_000_000_000_000;
+                /*
+                 * x * ax + y * bx = tx
+                 * x * ay + y * by = ty
+                 *
+                 * x = (tx - (bx * ty)/by) / (ax - (bx * ay)/by)
+                 * y = (tx - (ax * ty)/ay) / (ay - (ax * by)/ay)
+                 */
 
                 /*
                 ax = 258;
@@ -157,99 +163,50 @@ namespace aoc2024
                 tx = 369;
                 */
 
+                /*
                 var axf = ArrayMethods.PrimeFactors(ax);
                 var ayf = ArrayMethods.PrimeFactors(ay);
                 var bxf = ArrayMethods.PrimeFactors(bx);
                 var byf = ArrayMethods.PrimeFactors(by);
+                */
 
                 Console.WriteLine($"Puzzle {puzzle}");
-                Console.WriteLine($"ax = {ax} (" + string.Join(" ", axf.Select(v => v.ToString())) + ")");
-                Console.WriteLine($"ay = {ay} (" + string.Join(" ", ayf.Select(v => v.ToString())) + ")");
-                Console.WriteLine($"bx = {bx} (" + string.Join(" ", bxf.Select(v => v.ToString())) + ")");
-                Console.WriteLine($"by = {by} (" + string.Join(" ", byf.Select(v => v.ToString())) + ")");
+                /*
                 var gcdx = Gcd(ax, bx, out var xgcdlist);
                 var gcdy = Gcd(ay, by, out var ygcdlist);
-                Console.WriteLine($"GCD(ax,bx) = {gcdx}, GCD(ay,by) = {gcdy}");
                 var res = (tx % gcdx) == 0 && (ty % gcdy) == 0 && gcdx > 1 && gcdy > 1 ? "Yes" : "No";
                 Console.WriteLine($"Has solution: {res}");
+                */
 
-                var xmax = ax > bx ? ax : bx;
-                var xmin = ax <= bx ? ax : bx;
+                // A presses
+                Int64 t = tx * by - bx * ty;
+                Int64 n = ax * by - bx * ay;
 
-                if (res == "Yes")
+                if (t % n != 0)
                 {
-                    int idx = xgcdlist.Count - 2;
-                    long a = 1;
-                    long b = -xgcdlist[idx - 1] / xgcdlist[idx];
-                    while (idx > 1)
+                    Console.WriteLine("No solution");
+                }
+                else
+                {
+                    Int64 apress = t / n;
+
+                    t = tx * ay - ax * ty;
+                    n = bx * ay - ax * by;
+
+                    if (t % n != 0)
                     {
-                        idx--;
-                        var anew = b;
-                        var bnew = a - (b * (xgcdlist[idx-1]/xgcdlist[idx]));
-                        a = anew;
-                        b = bnew;
-                    }
-
-                    a *= tx/gcdx;
-                    b *= tx/gcdx;
-
-                    Console.WriteLine($"{a}*{xmax} + {b}*{xmin} = {a*xmax + b*xmin}, should be {tx}");
-                    Console.WriteLine($"{a-3}*{xmax} + {b+14}*{xmin} = {(a-3) * xmax + (b+14) * xmin}, should be {tx}");
-                    Console.WriteLine($"{a-2*3}*{xmax} + {b+28}*{xmin} = {(a-6) * xmax + (b+28) * xmin}, should be {tx}");
-
-
-                    var xfa = a;
-                    var xfb = ax/gcdx;
-                    if (b < 0)
-                    {
-                        xfb = -xfb;
-                    }
-
-                    var yfa = b;
-                    var yfb = bx/gcdx;
-                    if (a < 0)
-                    {
-                        yfb = -yfb;
-                    }
-
-                    Console.WriteLine($"x = {xfa} + {xfb}*r, y = {yfa} + {yfb}*r");
-
-                    long minr = 0;
-                    long maxr = 0;
-
-                    if (xfa < 0)
-                    {
-                        minr = -(xfa - xfb + 1) / xfb;
-                        maxr = yfa / -yfb;
+                        Console.WriteLine("No solution");
                     }
                     else
                     {
-                        minr = -(yfa - yfb + 1) / yfb;
-                        maxr = xfa / -xfb;
-                    }
+                        Int64 bpress = t / n;
 
-                    long minRTokens = 3 * (xfa + xfb * minr) + (yfa + yfb * minr);
-                    long maxRTokens = 3 * (xfa + xfb * maxr) + (yfa + yfb * maxr);
+                        Console.WriteLine($"{apress}*{ax} + {bpress}*{bx} = {apress * ax + bpress * bx} should be {tx}");
+                        Console.WriteLine($"{apress}*{ay} + {bpress}*{by} = {apress * ay + bpress * by} should be {ty}");
 
-                    Console.WriteLine($"minr = {minr} maxr = {maxr}");
-                    Console.WriteLine($"Min: x = {xfa + xfb * minr} y = {yfa + yfb * minr}, tokens = {minRTokens} res = {(xfa + xfb * minr) * xmax + (yfa + yfb * minr) * xmin}");
-                    Console.WriteLine($"Max: x = {xfa + xfb * maxr} y = {yfa + yfb * maxr}, tokens = {maxRTokens} res = {(xfa + xfb * maxr) * xmax + (yfa + yfb * maxr) * xmin}");
-
-                    if (minRTokens < 1 || maxRTokens < 1)
-                    {
-                        Console.WriteLine($"Error!");
-                    }
-
-                    if (minRTokens < maxRTokens)
-                    {
-                        sum += minRTokens;
-                    }
-                    else
-                    {
-                        sum += maxRTokens;
+                        sum += 3 * apress + bpress;
                     }
                 }
-
 
 
             }
