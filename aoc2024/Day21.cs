@@ -24,9 +24,10 @@ namespace aoc2024
             new[] { '<', 'v', '>' },
         };
 
-        internal Dictionary<string, string> BigMoves = new Dictionary<string, string>();
+        internal Dictionary<string, string[]> BigMoves;// = new Dictionary<string, string>();
 
-        internal Dictionary<string, string> SmallMoves = new Dictionary<string, string>();
+        internal Dictionary<string, string[]> SmallMoves;// = new Dictionary<string, string>();
+
 
         internal void BuildDictionaries()
         {
@@ -45,6 +46,8 @@ namespace aoc2024
 
                                 if (cc > c)
                                 {
+                                    var mm = new List<string>();
+
                                     moves.AddRange(Enumerable.Repeat('>', cc - c));
                                     if (rr > r)
                                     {
@@ -54,9 +57,33 @@ namespace aoc2024
                                     {
                                         moves.AddRange(Enumerable.Repeat('^', r - rr));
                                     }
+                                    moves.Add('A');
+
+                                    mm.Add(new string(moves.ToArray()));
+
+                                    if (c >= 1)
+                                    {
+                                        moves.Clear();
+                                        if (rr > r)
+                                        {
+                                            moves.AddRange(Enumerable.Repeat('v', rr - r));
+                                        }
+                                        else if (rr < r)
+                                        {
+                                            moves.AddRange(Enumerable.Repeat('^', r - rr));
+                                        }
+                                        moves.AddRange(Enumerable.Repeat('>', cc - c));
+                                        moves.Add('A');
+
+                                        mm.Add(new string(moves.ToArray()));
+                                    }
+
+                                    BigMoves[new string(new[] { BigLayout[r][c], BigLayout[rr][cc] })] = mm.ToArray();
                                 }
                                 else if (cc <= c)
                                 {
+                                    var mm = new List<string>();
+
                                     if (rr < r)
                                     {
                                         moves.AddRange(Enumerable.Repeat('^', r - rr));
@@ -67,11 +94,33 @@ namespace aoc2024
                                     }
 
                                     moves.AddRange(Enumerable.Repeat('<', c - cc));
+
+                                    moves.Add('A');
+                                    mm.Add(new string(moves.ToArray()));
+
+                                    if (cc >= 1 || cc == 0 && r < 4)
+                                    {
+                                        moves.AddRange(Enumerable.Repeat('<', c - cc));
+                                        if (rr < r)
+                                        {
+                                            moves.AddRange(Enumerable.Repeat('^', r - rr));
+                                        }
+                                        else if (rr > r)
+                                        {
+                                            moves.AddRange(Enumerable.Repeat('v', rr - r));
+                                        }
+                                        moves.Add('A');
+                                        mm.Add(new string(moves.ToArray()));
+
+                                        BigMoves[new string(new[] { BigLayout[r][c], BigLayout[rr][cc] })] = mm.ToArray();
+                                    }
                                 }
+                                else
+                                {
+                                    moves.Add('A');
 
-                                moves.Add('A');
-
-                                BigMoves[new string(new[] { BigLayout[r][c], BigLayout[rr][cc] })] = new string(moves.ToArray());
+                                    BigMoves[new string(new[] { BigLayout[r][c], BigLayout[rr][cc] })] = new[] { new string(moves.ToArray()) };
+                                }
                             }
                         }
                     }
@@ -119,7 +168,7 @@ namespace aoc2024
 
                                 moves.Add('A');
 
-                                SmallMoves[new string(new[] { SmallLayout[r][c], SmallLayout[rr][cc] })] = new string(moves.ToArray());
+                                SmallMoves[new string(new[] { SmallLayout[r][c], SmallLayout[rr][cc] })] = new[] { new string(moves.ToArray()) };
                             }
                         }
                     }
@@ -158,13 +207,13 @@ namespace aoc2024
                     for (int pp = 1; pp < S.Length; pp++)
                     {
                         string SS = "A" + SmallMoves[S.Substring(pp - 1, 2)];
-
+                        /*
                         for (int ppp = 1; ppp < SS.Length; ppp++)
                         {
                             string SSS = SmallMoves[SS.Substring(ppp - 1, 2)];
                             Console.Write(SSS);
                             thisCount += SSS.Length;
-                        }
+                        }*/
                     }
 
                 }
